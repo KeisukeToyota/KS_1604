@@ -17,8 +17,10 @@ from linebot.models import (
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi('wOq1fV72a9qiUfck9YKsb/3OvZVDNusDvTu3iTYNqT1eZxxa17LG24yMFzT+vQKV0NUkk2rhpTZa3RA2F58V4fhLkt9qYWq/DEy+xs3Z/66M0prHZGutN2ObaZJkQGpqog6ut/lblNlwzZPivTYbFgdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi(
+    'wOq1fV72a9qiUfck9YKsb/3OvZVDNusDvTu3iTYNqT1eZxxa17LG24yMFzT+vQKV0NUkk2rhpTZa3RA2F58V4fhLkt9qYWq/DEy+xs3Z/66M0prHZGutN2ObaZJkQGpqog6ut/lblNlwzZPivTYbFgdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('48a925c4588ef8ebdcb55a215b9fa0d7')
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -34,15 +36,19 @@ def callback():
     user_idの取得
     body['event'].item()['source']['userId']
     '''
+    #テキストに出力
     f = open('userID.txt', 'a+')
     f.write(body['event'].item()['source']['userId'])
     f.close()
-    
-    if not ("召喚！" in body['events'][0]['message']['text']) :
-        r = requests.get( 'https://chatbot-api.userlocal.jp/api/chat?message=' + urllib.parse.quote(body['events'][0]['message']['text']) + '&key=bfdc7c72ab01f54f01d3' )
-        line_bot_api.reply_message(body['events'][0]['replyToken'],TextSendMessage(text=json.loads(r.text)['result']))
-    else :
-        line_bot_api.reply_message(body['events'][0]['replyToken'],TextSendMessage(text=json.loads( requests.get( 'http://calmery.me/getNameData.php' ).text )[body['events'][0]['message']['text'].replace('召喚！', '')] + 'さん！おかえりなさい！'))
+
+    if not ("召喚！" in body['events'][0]['message']['text']):
+        r = requests.get('https://chatbot-api.userlocal.jp/api/chat?message=' +
+                         urllib.parse.quote(body['events'][0]['message']['text']) + '&key=bfdc7c72ab01f54f01d3')
+        line_bot_api.reply_message(body['events'][0]['replyToken'], TextSendMessage(
+            text=json.loads(r.text)['result']))
+    else:
+        line_bot_api.reply_message(body['events'][0]['replyToken'], TextSendMessage(text=json.loads(requests.get(
+            'http://calmery.me/getNameData.php').text)[body['events'][0]['message']['text'].replace('召喚！', '')] + 'さん！おかえりなさい！'))
 
     # handle webhook body
     #handler.handle(body, signature)
@@ -53,4 +59,4 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     line_bot_api.reply_message(
-        event.reply_token,TextSendMessage(text='Hello World!'))
+        event.reply_token, TextSendMessage(text='Hello World!'))
