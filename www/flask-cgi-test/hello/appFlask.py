@@ -29,6 +29,14 @@ def callback():
     body = json.loads(request.get_data(as_text=True))
     #raise Exception(body)
     #app.logger.info("Request body: " + body)
+
+    '''
+    user_idの取得
+    body['event'].item()['source']['userId']
+    '''
+    f = open('userID.txt', 'a+')
+    f.write(body['event'].item()['source']['userId'])
+    f.close()
     
     if not ("召喚！" in body['events'][0]['message']['text']) :
         r = requests.get( 'https://chatbot-api.userlocal.jp/api/chat?message=' + urllib.parse.quote(body['events'][0]['message']['text']) + '&key=bfdc7c72ab01f54f01d3' )
